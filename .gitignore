@@ -1,0 +1,31 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Vitis / Vivado / HLS generated files
+.vitis/
+.Xil/
+*.log
+*.jou
+*.str
+*.tmp
+
+# HLS build directories
+solution*/
+*_hls/
+build/
+
+# Vivado
+*.cache/
+*.hw/
+*.ip_user_files/
+*.runs/
+*.sim/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
