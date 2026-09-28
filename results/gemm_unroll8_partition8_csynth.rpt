@@ -1,0 +1,371 @@
+
+
+================================================================
+== Synthesis Summary Report of 'gemm'
+================================================================
++ General Information: 
+    * Date:           Mon Sep 28 16:46:50 2026
+    * Version:        2025.2 (Build 6295257 on Nov 14 2025)
+    * Project:        gemm
+    * Solution:       hls (Vitis Kernel Flow Target)
+    * Product family: zynquplus
+    * Target device:  xck26-sfvc784-2LV-c
+    
+
+* Performance & Resource Estimates: 
++------------------------------------------------------------------+------+---------------+----------+---------+------+----------+---------+-----------+------+----------+---------+------------+------------+-----+
+|                              Modules                             | Issue|               | Iteration|         | Trip |          |       Latency       |      |          |         |            |            |     |
+|                              & Loops                             | Type | Violation Type|  Latency | Interval| Count| Pipelined| (cycles)|    (ns)   | Slack|   BRAM   |   DSP   |     FF     |     LUT    | URAM|
++------------------------------------------------------------------+------+---------------+----------+---------+------+----------+---------+-----------+------+----------+---------+------------+------------+-----+
+|+ gemm                                                            |     -|              -|         -|      775|     -|        no|      774|  3.870e+03|  0.00|  29 (10%)|  4 (~0%)|   7249 (3%)|  11327 (9%)|    -|
+| + gemm_Pipeline_VITIS_LOOP_15_1                                  |     -|              -|         -|        -|     -|       yes|       19|     95.000|  0.00|         -|        -|   920 (~0%)|   110 (~0%)|    -|
+|  o VITIS_LOOP_15_1                                               |     -|              -|         3|        1|    16|       yes|       17|     85.000|  3.65|         -|        -|           -|           -|    -|
+| + gemm_Pipeline_VITIS_LOOP_22_3                                  |     -|              -|         -|        -|     -|       yes|       19|     95.000|  0.00|         -|        -|   918 (~0%)|   110 (~0%)|    -|
+|  o VITIS_LOOP_22_3                                               |     -|              -|         3|        1|    16|       yes|       17|     85.000|  3.65|         -|        -|           -|           -|    -|
+| + gemm_Pipeline_VITIS_LOOP_29_5_VITIS_LOOP_30_6_VITIS_LOOP_34_7  |     -|              -|         -|        -|     -|       yes|      519|  2.595e+03|  0.00|         -|  4 (~0%)|  1941 (~0%)|   2274 (1%)|    -|
+|  o VITIS_LOOP_29_5_VITIS_LOOP_30_6_VITIS_LOOP_34_7               |     -|              -|         7|        1|   512|       yes|      517|  2.585e+03|  3.65|         -|        -|           -|           -|    -|
++------------------------------------------------------------------+------+---------------+----------+---------+------+----------+---------+-----------+------+----------+---------+------------+------------+-----+
+    Name Prefix: '+' for module, 'o' for loop, '*' for dataflow
+
+
+================================================================
+== HW Interfaces
+================================================================
+* M_AXI
++------------+------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| Interface  | Read/Write | Data Width | Address Width | Latency | Offset | Register | Max Widen | Max Read     | Max Write    | Num Read    | Num Write   | Resource Estimate |
+|            |            | (SW->HW)   |               |         |        |          | Bitwidth  | Burst Length | Burst Length | Outstanding | Outstanding |                   |
++------------+------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+| m_axi_gmem | READ_WRITE | 8 -> 512   | 64            | 64      | slave  | 0        | 512       | 16           | 16           | 16          | 16          | BRAM=29           |
++------------+------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+-------------------+
+
+* S_AXILITE Interfaces
++---------------+------------+---------------+--------+----------+
+| Interface     | Data Width | Address Width | Offset | Register |
++---------------+------------+---------------+--------+----------+
+| s_axi_control | 32         | 6             | 16     | 0        |
++---------------+------------+---------------+--------+----------+
+
+* S_AXILITE Registers
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| Interface     | Register | Offset | Width | Access | Description                      | Bit Fields                                                                         |
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+| s_axi_control | CTRL     | 0x00   | 32    | RW     | Control signals                  | 0=AP_START 1=AP_DONE 2=AP_IDLE 3=AP_READY 4=AP_CONTINUE 7=AUTO_RESTART 9=INTERRUPT |
+| s_axi_control | GIER     | 0x04   | 32    | RW     | Global Interrupt Enable Register | 0=Enable                                                                           |
+| s_axi_control | IP_IER   | 0x08   | 32    | RW     | IP Interrupt Enable Register     | 0=CHAN0_INT_EN 1=CHAN1_INT_EN                                                      |
+| s_axi_control | IP_ISR   | 0x0c   | 32    | RW     | IP Interrupt Status Register     | 0=CHAN0_INT_ST 1=CHAN1_INT_ST                                                      |
+| s_axi_control | A_1      | 0x10   | 32    | W      | Data signal of A                 |                                                                                    |
+| s_axi_control | A_2      | 0x14   | 32    | W      | Data signal of A                 |                                                                                    |
+| s_axi_control | B_1      | 0x1c   | 32    | W      | Data signal of B                 |                                                                                    |
+| s_axi_control | B_2      | 0x20   | 32    | W      | Data signal of B                 |                                                                                    |
+| s_axi_control | C_1      | 0x28   | 32    | W      | Data signal of C                 |                                                                                    |
+| s_axi_control | C_2      | 0x2c   | 32    | W      | Data signal of C                 |                                                                                    |
++---------------+----------+--------+-------+--------+----------------------------------+------------------------------------------------------------------------------------+
+
+* TOP LEVEL CONTROL
++-----------+---------------+-----------+
+| Interface | Type          | Ports     |
++-----------+---------------+-----------+
+| ap_clk    | clock         | ap_clk    |
+| ap_rst_n  | reset         | ap_rst_n  |
+| interrupt | interrupt     | interrupt |
+| ap_ctrl   | ap_ctrl_chain |           |
++-----------+---------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++----------+-----------+-------------------+
+| Argument | Direction | Datatype          |
++----------+-----------+-------------------+
+| A        | inout     | ap_int<8> const * |
+| B        | inout     | ap_int<8> const * |
+| C        | inout     | ap_int<32>*       |
++----------+-----------+-------------------+
+
+* SW-to-HW Mapping
++----------+---------------+-----------+----------+-------------------------------+
+| Argument | HW Interface  | HW Type   | HW Usage | HW Info                       |
++----------+---------------+-----------+----------+-------------------------------+
+| A        | m_axi_gmem    | interface |          | channel=0                     |
+| A        | s_axi_control | register  | offset   | name=A_1 offset=0x10 range=32 |
+| A        | s_axi_control | register  | offset   | name=A_2 offset=0x14 range=32 |
+| B        | m_axi_gmem    | interface |          | channel=0                     |
+| B        | s_axi_control | register  | offset   | name=B_1 offset=0x1c range=32 |
+| B        | s_axi_control | register  | offset   | name=B_2 offset=0x20 range=32 |
+| C        | m_axi_gmem    | interface |          | channel=0                     |
+| C        | s_axi_control | register  | offset   | name=C_1 offset=0x28 range=32 |
+| C        | s_axi_control | register  | offset   | name=C_2 offset=0x2c range=32 |
++----------+---------------+-----------+----------+-------------------------------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+ Note: All burst requests might be further partitioned into multiple requests during RTL generation based on max_read_burst_length or max_write_burst_length settings.
+
+* Inferred Burst Summary
++--------------+-----------+--------+-------+-----------------+-------------------------+
+| HW Interface | Direction | Length | Width | Loop            | Loop Location           |
++--------------+-----------+--------+-------+-----------------+-------------------------+
+| m_axi_gmem   | read      | 4      | 512   |                 |                         |
+| m_axi_gmem   | write     | 16     | 512   | VITIS_LOOP_29_5 | hls/gemm/gemm.cpp:29:22 |
++--------------+-----------+--------+-------+-----------------+-------------------------+
+
+* All M_AXI Variable Accesses
++--------------+----------+-------------------------+-----------+--------------+--------+-----------------+-------------------------+------------+----------------------------------------------------------------------------------------------------------+
+| HW Interface | Variable | Access Location         | Direction | Burst Status | Length | Loop            | Loop Location           | Resolution | Problem                                                                                                  |
++--------------+----------+-------------------------+-----------+--------------+--------+-----------------+-------------------------+------------+----------------------------------------------------------------------------------------------------------+
+| m_axi_gmem   | A        | hls/gemm/gemm.cpp:15:22 | read      | Widened      | 4      | VITIS_LOOP_15_1 | hls/gemm/gemm.cpp:15:22 |            |                                                                                                          |
+| m_axi_gmem   | A        | hls/gemm/gemm.cpp:17:27 | read      | Widened      | 16     | VITIS_LOOP_16_2 | hls/gemm/gemm.cpp:16:26 |            |                                                                                                          |
+| m_axi_gmem   | A        | hls/gemm/gemm.cpp:17:27 | read      | Inferred     | 256    | VITIS_LOOP_15_1 | hls/gemm/gemm.cpp:15:22 |            |                                                                                                          |
+| m_axi_gmem   | B        | hls/gemm/gemm.cpp:22:22 | read      | Widened      | 4      | VITIS_LOOP_22_3 | hls/gemm/gemm.cpp:22:22 |            |                                                                                                          |
+| m_axi_gmem   | B        | hls/gemm/gemm.cpp:24:27 | read      | Widened      | 16     | VITIS_LOOP_23_4 | hls/gemm/gemm.cpp:23:26 |            |                                                                                                          |
+| m_axi_gmem   | B        | hls/gemm/gemm.cpp:24:27 | read      | Inferred     | 256    | VITIS_LOOP_22_3 | hls/gemm/gemm.cpp:22:22 |            |                                                                                                          |
+| m_axi_gmem   | C        | hls/gemm/gemm.cpp:29:22 | write     | Widen Fail   |        | VITIS_LOOP_29_5 | hls/gemm/gemm.cpp:29:22 | 214-353    | Could not widen since type i512 size is greater than or equal to the max_widen_bitwidth threshold of 512 |
+| m_axi_gmem   | C        | hls/gemm/gemm.cpp:40:21 | write     | Widened      | 16     | VITIS_LOOP_30_6 | hls/gemm/gemm.cpp:30:26 |            |                                                                                                          |
+| m_axi_gmem   | C        | hls/gemm/gemm.cpp:40:21 | write     | Inferred     | 256    | VITIS_LOOP_29_5 | hls/gemm/gemm.cpp:29:22 |            |                                                                                                          |
++--------------+----------+-------------------------+-----------+--------------+--------+-----------------+-------------------------+------------+----------------------------------------------------------------------------------------------------------+
+
+    * Resolution URL: docs.amd.com/access/sources/dita/topic?Doc_Version=2025.2%20English&url=ug1448-hls-guidance&resourceid=XXX-YYY.html (replace XXX-YYY with column value)
+
+================================================================
+== Bind Op Report
+================================================================
++------------------------------------------------------------------+-----+--------+---------------+-----------+--------------------------+---------+
+| Name                                                             | DSP | Pragma | Variable      | Op        | Impl                     | Latency |
++------------------------------------------------------------------+-----+--------+---------------+-----------+--------------------------+---------+
+| + gemm                                                           | 4   |        |               |           |                          |         |
+|  + gemm_Pipeline_VITIS_LOOP_15_1                                 | 0   |        |               |           |                          |         |
+|    icmp_ln15_fu_381_p2                                           |     |        | icmp_ln15     | seteq     | auto                     | 0       |
+|    add_ln15_fu_387_p2                                            |     |        | add_ln15      | add       | fabric                   | 0       |
+|    icmp_ln16_fu_397_p2                                           |     |        | icmp_ln16     | seteq     | auto                     | 0       |
+|  + gemm_Pipeline_VITIS_LOOP_22_3                                 | 0   |        |               |           |                          |         |
+|    icmp_ln22_fu_2099_p2                                          |     |        | icmp_ln22     | seteq     | auto                     | 0       |
+|    add_ln22_fu_2105_p2                                           |     |        | add_ln22      | add       | fabric                   | 0       |
+|    icmp_ln23_fu_2127_p2                                          |     |        | icmp_ln23     | seteq     | auto                     | 0       |
+|  + gemm_Pipeline_VITIS_LOOP_29_5_VITIS_LOOP_30_6_VITIS_LOOP_34_7 | 4   |        |               |           |                          |         |
+|    icmp_ln29_fu_2253_p2                                          |     |        | icmp_ln29     | seteq     | auto                     | 0       |
+|    add_ln29_1_fu_2259_p2                                         |     |        | add_ln29_1    | add       | fabric                   | 0       |
+|    add_ln29_fu_2271_p2                                           |     |        | add_ln29      | add       | fabric                   | 0       |
+|    icmp_ln30_fu_2277_p2                                          |     |        | icmp_ln30     | seteq     | auto                     | 0       |
+|    select_ln29_fu_2474_p3                                        |     |        | select_ln29   | select    | auto_sel                 | 0       |
+|    select_ln29_1_fu_3236_p3                                      |     |        | select_ln29_1 | select    | auto_sel                 | 0       |
+|    select_ln29_2_fu_2283_p3                                      |     |        | select_ln29_2 | select    | auto_sel                 | 0       |
+|    select_ln29_3_fu_3243_p3                                      |     |        | select_ln29_3 | select    | auto_sel                 | 0       |
+|    xor_ln34_fu_2299_p2                                           |     |        | xor_ln34      | xor       | auto                     | 0       |
+|    or_ln29_fu_2305_p2                                            |     |        | or_ln29       | or        | auto                     | 0       |
+|    select_ln29_4_fu_2311_p3                                      |     |        | select_ln29_4 | select    | auto_sel                 | 0       |
+|    add_ln30_fu_2481_p2                                           |     |        | add_ln30      | add       | fabric                   | 0       |
+|    k_1_mid2_fu_2323_p3                                           |     |        | k_1_mid2      | select    | auto_sel                 | 0       |
+|    acc_mid2_fu_3250_p3                                           |     |        | acc_mid2      | select    | auto_sel                 | 0       |
+|    select_ln30_fu_2487_p3                                        |     |        | select_ln30   | select    | auto_sel                 | 0       |
+|    select_ln30_1_fu_3257_p3                                      |     |        | select_ln30_1 | select    | auto_sel                 | 0       |
+|    sparsemux_33_4_8_1_1_U145                                     |     |        | tmp           | sparsemux | compactencoding_dontcare | 0       |
+|    mul_8s_8s_16_1_1_U146                                         |     |        | mul_ln37      | mul       | auto                     | 0       |
+|    sparsemux_33_4_8_1_1_U141                                     |     |        | tmp_1         | sparsemux | compactencoding_dontcare | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U153                              | 1   |        | mul_ln37_1    | mul       | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U153                              | 1   |        | sext_ln37_5   | sext      | dsp_slice                | 3       |
+|    sparsemux_33_4_8_1_1_U147                                     |     |        | tmp_2         | sparsemux | compactencoding_dontcare | 0       |
+|    mul_8s_8s_16_1_1_U148                                         |     |        | mul_ln37_2    | mul       | auto                     | 0       |
+|    sparsemux_33_4_8_1_1_U142                                     |     |        | tmp_3         | sparsemux | compactencoding_dontcare | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U154                              | 1   |        | mul_ln37_3    | mul       | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U154                              | 1   |        | sext_ln37_11  | sext      | dsp_slice                | 3       |
+|    sparsemux_33_4_8_1_1_U149                                     |     |        | tmp_4         | sparsemux | compactencoding_dontcare | 0       |
+|    mul_8s_8s_16_1_1_U150                                         |     |        | mul_ln37_4    | mul       | auto                     | 0       |
+|    sparsemux_33_4_8_1_1_U143                                     |     |        | tmp_5         | sparsemux | compactencoding_dontcare | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U155                              | 1   |        | mul_ln37_5    | mul       | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U155                              | 1   |        | sext_ln37_17  | sext      | dsp_slice                | 3       |
+|    sparsemux_33_4_8_1_1_U151                                     |     |        | tmp_6         | sparsemux | compactencoding_dontcare | 0       |
+|    mul_8s_8s_16_1_1_U152                                         |     |        | mul_ln37_6    | mul       | auto                     | 0       |
+|    sparsemux_33_4_8_1_1_U144                                     |     |        | tmp_7         | sparsemux | compactencoding_dontcare | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U156                              | 1   |        | mul_ln37_7    | mul       | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U156                              | 1   |        | sext_ln37_23  | sext      | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U153                              | 1   |        | add_ln37      | add       | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U154                              | 1   |        | add_ln37_1    | add       | dsp_slice                | 3       |
+|    add_ln37_2_fu_3191_p2                                         |     |        | add_ln37_2    | add       | fabric                   | 0       |
+|    mac_muladd_8s_8s_16s_17_4_1_U155                              | 1   |        | add_ln37_3    | add       | dsp_slice                | 3       |
+|    mac_muladd_8s_8s_16s_17_4_1_U156                              | 1   |        | add_ln37_4    | add       | dsp_slice                | 3       |
+|    add_ln37_5_fu_3207_p2                                         |     |        | add_ln37_5    | add       | fabric                   | 0       |
+|    add_ln37_6_fu_3217_p2                                         |     |        | add_ln37_6    | add       | fabric                   | 0       |
+|    acc_1_fu_3267_p2                                              |     |        | acc_1         | add       | fabric                   | 0       |
+|    add_ln34_fu_2423_p2                                           |     |        | add_ln34      | add       | fabric                   | 0       |
+|    icmp_ln30_1_fu_2818_p2                                        |     |        | icmp_ln30_1   | seteq     | auto                     | 0       |
+|    add_ln30_1_fu_2437_p2                                         |     |        | add_ln30_1    | add       | fabric                   | 0       |
+|    select_ln30_2_fu_2443_p3                                      |     |        | select_ln30_2 | select    | auto_sel                 | 0       |
++------------------------------------------------------------------+-----+--------+---------------+-----------+--------------------------+---------+
+
+
+================================================================
+== Storage Report
+================================================================
++-------------------+---------------+-----------+------+------+--------+-------------+------+---------+------------------+
+| Name              | Usage         | Type      | BRAM | URAM | Pragma | Variable    | Impl | Latency | Bitwidth, Depth, |
+|                   |               |           |      |      |        |             |      |         | Banks            |
++-------------------+---------------+-----------+------+------+--------+-------------+------+---------+------------------+
+| + gemm            |               |           | 29   | 0    |        |             |      |         |                  |
+|   control_s_axi_U | interface     | s_axilite |      |      |        |             |      |         |                  |
+|   gmem_m_axi_U    | interface     | m_axi     | 29   |      |        |             |      |         |                  |
+|   A_local_U       | ram_t2p array |           |      |      |        | A_local     | auto | 1       | 8, 32, 1         |
+|   A_local_1_U     | ram_t2p array |           |      |      |        | A_local_1   | auto | 1       | 8, 32, 1         |
+|   A_local_2_U     | ram_t2p array |           |      |      |        | A_local_2   | auto | 1       | 8, 32, 1         |
+|   A_local_3_U     | ram_t2p array |           |      |      |        | A_local_3   | auto | 1       | 8, 32, 1         |
+|   A_local_4_U     | ram_t2p array |           |      |      |        | A_local_4   | auto | 1       | 8, 32, 1         |
+|   A_local_5_U     | ram_t2p array |           |      |      |        | A_local_5   | auto | 1       | 8, 32, 1         |
+|   A_local_6_U     | ram_t2p array |           |      |      |        | A_local_6   | auto | 1       | 8, 32, 1         |
+|   A_local_7_U     | ram_t2p array |           |      |      |        | A_local_7   | auto | 1       | 8, 32, 1         |
+|   B_local_U       | ram_1p array  |           |      |      |        | B_local     | auto | 1       | 8, 2, 1          |
+|   B_local_1_U     | ram_1p array  |           |      |      |        | B_local_1   | auto | 1       | 8, 2, 1          |
+|   B_local_2_U     | ram_1p array  |           |      |      |        | B_local_2   | auto | 1       | 8, 2, 1          |
+|   B_local_3_U     | ram_1p array  |           |      |      |        | B_local_3   | auto | 1       | 8, 2, 1          |
+|   B_local_4_U     | ram_1p array  |           |      |      |        | B_local_4   | auto | 1       | 8, 2, 1          |
+|   B_local_5_U     | ram_1p array  |           |      |      |        | B_local_5   | auto | 1       | 8, 2, 1          |
+|   B_local_6_U     | ram_1p array  |           |      |      |        | B_local_6   | auto | 1       | 8, 2, 1          |
+|   B_local_7_U     | ram_1p array  |           |      |      |        | B_local_7   | auto | 1       | 8, 2, 1          |
+|   B_local_8_U     | ram_1p array  |           |      |      |        | B_local_8   | auto | 1       | 8, 2, 1          |
+|   B_local_9_U     | ram_1p array  |           |      |      |        | B_local_9   | auto | 1       | 8, 2, 1          |
+|   B_local_10_U    | ram_1p array  |           |      |      |        | B_local_10  | auto | 1       | 8, 2, 1          |
+|   B_local_11_U    | ram_1p array  |           |      |      |        | B_local_11  | auto | 1       | 8, 2, 1          |
+|   B_local_12_U    | ram_1p array  |           |      |      |        | B_local_12  | auto | 1       | 8, 2, 1          |
+|   B_local_13_U    | ram_1p array  |           |      |      |        | B_local_13  | auto | 1       | 8, 2, 1          |
+|   B_local_14_U    | ram_1p array  |           |      |      |        | B_local_14  | auto | 1       | 8, 2, 1          |
+|   B_local_15_U    | ram_1p array  |           |      |      |        | B_local_15  | auto | 1       | 8, 2, 1          |
+|   B_local_16_U    | ram_1p array  |           |      |      |        | B_local_16  | auto | 1       | 8, 2, 1          |
+|   B_local_17_U    | ram_1p array  |           |      |      |        | B_local_17  | auto | 1       | 8, 2, 1          |
+|   B_local_18_U    | ram_1p array  |           |      |      |        | B_local_18  | auto | 1       | 8, 2, 1          |
+|   B_local_19_U    | ram_1p array  |           |      |      |        | B_local_19  | auto | 1       | 8, 2, 1          |
+|   B_local_20_U    | ram_1p array  |           |      |      |        | B_local_20  | auto | 1       | 8, 2, 1          |
+|   B_local_21_U    | ram_1p array  |           |      |      |        | B_local_21  | auto | 1       | 8, 2, 1          |
+|   B_local_22_U    | ram_1p array  |           |      |      |        | B_local_22  | auto | 1       | 8, 2, 1          |
+|   B_local_23_U    | ram_1p array  |           |      |      |        | B_local_23  | auto | 1       | 8, 2, 1          |
+|   B_local_24_U    | ram_1p array  |           |      |      |        | B_local_24  | auto | 1       | 8, 2, 1          |
+|   B_local_25_U    | ram_1p array  |           |      |      |        | B_local_25  | auto | 1       | 8, 2, 1          |
+|   B_local_26_U    | ram_1p array  |           |      |      |        | B_local_26  | auto | 1       | 8, 2, 1          |
+|   B_local_27_U    | ram_1p array  |           |      |      |        | B_local_27  | auto | 1       | 8, 2, 1          |
+|   B_local_28_U    | ram_1p array  |           |      |      |        | B_local_28  | auto | 1       | 8, 2, 1          |
+|   B_local_29_U    | ram_1p array  |           |      |      |        | B_local_29  | auto | 1       | 8, 2, 1          |
+|   B_local_30_U    | ram_1p array  |           |      |      |        | B_local_30  | auto | 1       | 8, 2, 1          |
+|   B_local_31_U    | ram_1p array  |           |      |      |        | B_local_31  | auto | 1       | 8, 2, 1          |
+|   B_local_32_U    | ram_1p array  |           |      |      |        | B_local_32  | auto | 1       | 8, 2, 1          |
+|   B_local_33_U    | ram_1p array  |           |      |      |        | B_local_33  | auto | 1       | 8, 2, 1          |
+|   B_local_34_U    | ram_1p array  |           |      |      |        | B_local_34  | auto | 1       | 8, 2, 1          |
+|   B_local_35_U    | ram_1p array  |           |      |      |        | B_local_35  | auto | 1       | 8, 2, 1          |
+|   B_local_36_U    | ram_1p array  |           |      |      |        | B_local_36  | auto | 1       | 8, 2, 1          |
+|   B_local_37_U    | ram_1p array  |           |      |      |        | B_local_37  | auto | 1       | 8, 2, 1          |
+|   B_local_38_U    | ram_1p array  |           |      |      |        | B_local_38  | auto | 1       | 8, 2, 1          |
+|   B_local_39_U    | ram_1p array  |           |      |      |        | B_local_39  | auto | 1       | 8, 2, 1          |
+|   B_local_40_U    | ram_1p array  |           |      |      |        | B_local_40  | auto | 1       | 8, 2, 1          |
+|   B_local_41_U    | ram_1p array  |           |      |      |        | B_local_41  | auto | 1       | 8, 2, 1          |
+|   B_local_42_U    | ram_1p array  |           |      |      |        | B_local_42  | auto | 1       | 8, 2, 1          |
+|   B_local_43_U    | ram_1p array  |           |      |      |        | B_local_43  | auto | 1       | 8, 2, 1          |
+|   B_local_44_U    | ram_1p array  |           |      |      |        | B_local_44  | auto | 1       | 8, 2, 1          |
+|   B_local_45_U    | ram_1p array  |           |      |      |        | B_local_45  | auto | 1       | 8, 2, 1          |
+|   B_local_46_U    | ram_1p array  |           |      |      |        | B_local_46  | auto | 1       | 8, 2, 1          |
+|   B_local_47_U    | ram_1p array  |           |      |      |        | B_local_47  | auto | 1       | 8, 2, 1          |
+|   B_local_48_U    | ram_1p array  |           |      |      |        | B_local_48  | auto | 1       | 8, 2, 1          |
+|   B_local_49_U    | ram_1p array  |           |      |      |        | B_local_49  | auto | 1       | 8, 2, 1          |
+|   B_local_50_U    | ram_1p array  |           |      |      |        | B_local_50  | auto | 1       | 8, 2, 1          |
+|   B_local_51_U    | ram_1p array  |           |      |      |        | B_local_51  | auto | 1       | 8, 2, 1          |
+|   B_local_52_U    | ram_1p array  |           |      |      |        | B_local_52  | auto | 1       | 8, 2, 1          |
+|   B_local_53_U    | ram_1p array  |           |      |      |        | B_local_53  | auto | 1       | 8, 2, 1          |
+|   B_local_54_U    | ram_1p array  |           |      |      |        | B_local_54  | auto | 1       | 8, 2, 1          |
+|   B_local_55_U    | ram_1p array  |           |      |      |        | B_local_55  | auto | 1       | 8, 2, 1          |
+|   B_local_56_U    | ram_1p array  |           |      |      |        | B_local_56  | auto | 1       | 8, 2, 1          |
+|   B_local_57_U    | ram_1p array  |           |      |      |        | B_local_57  | auto | 1       | 8, 2, 1          |
+|   B_local_58_U    | ram_1p array  |           |      |      |        | B_local_58  | auto | 1       | 8, 2, 1          |
+|   B_local_59_U    | ram_1p array  |           |      |      |        | B_local_59  | auto | 1       | 8, 2, 1          |
+|   B_local_60_U    | ram_1p array  |           |      |      |        | B_local_60  | auto | 1       | 8, 2, 1          |
+|   B_local_61_U    | ram_1p array  |           |      |      |        | B_local_61  | auto | 1       | 8, 2, 1          |
+|   B_local_62_U    | ram_1p array  |           |      |      |        | B_local_62  | auto | 1       | 8, 2, 1          |
+|   B_local_63_U    | ram_1p array  |           |      |      |        | B_local_63  | auto | 1       | 8, 2, 1          |
+|   B_local_64_U    | ram_1p array  |           |      |      |        | B_local_64  | auto | 1       | 8, 2, 1          |
+|   B_local_65_U    | ram_1p array  |           |      |      |        | B_local_65  | auto | 1       | 8, 2, 1          |
+|   B_local_66_U    | ram_1p array  |           |      |      |        | B_local_66  | auto | 1       | 8, 2, 1          |
+|   B_local_67_U    | ram_1p array  |           |      |      |        | B_local_67  | auto | 1       | 8, 2, 1          |
+|   B_local_68_U    | ram_1p array  |           |      |      |        | B_local_68  | auto | 1       | 8, 2, 1          |
+|   B_local_69_U    | ram_1p array  |           |      |      |        | B_local_69  | auto | 1       | 8, 2, 1          |
+|   B_local_70_U    | ram_1p array  |           |      |      |        | B_local_70  | auto | 1       | 8, 2, 1          |
+|   B_local_71_U    | ram_1p array  |           |      |      |        | B_local_71  | auto | 1       | 8, 2, 1          |
+|   B_local_72_U    | ram_1p array  |           |      |      |        | B_local_72  | auto | 1       | 8, 2, 1          |
+|   B_local_73_U    | ram_1p array  |           |      |      |        | B_local_73  | auto | 1       | 8, 2, 1          |
+|   B_local_74_U    | ram_1p array  |           |      |      |        | B_local_74  | auto | 1       | 8, 2, 1          |
+|   B_local_75_U    | ram_1p array  |           |      |      |        | B_local_75  | auto | 1       | 8, 2, 1          |
+|   B_local_76_U    | ram_1p array  |           |      |      |        | B_local_76  | auto | 1       | 8, 2, 1          |
+|   B_local_77_U    | ram_1p array  |           |      |      |        | B_local_77  | auto | 1       | 8, 2, 1          |
+|   B_local_78_U    | ram_1p array  |           |      |      |        | B_local_78  | auto | 1       | 8, 2, 1          |
+|   B_local_79_U    | ram_1p array  |           |      |      |        | B_local_79  | auto | 1       | 8, 2, 1          |
+|   B_local_80_U    | ram_1p array  |           |      |      |        | B_local_80  | auto | 1       | 8, 2, 1          |
+|   B_local_81_U    | ram_1p array  |           |      |      |        | B_local_81  | auto | 1       | 8, 2, 1          |
+|   B_local_82_U    | ram_1p array  |           |      |      |        | B_local_82  | auto | 1       | 8, 2, 1          |
+|   B_local_83_U    | ram_1p array  |           |      |      |        | B_local_83  | auto | 1       | 8, 2, 1          |
+|   B_local_84_U    | ram_1p array  |           |      |      |        | B_local_84  | auto | 1       | 8, 2, 1          |
+|   B_local_85_U    | ram_1p array  |           |      |      |        | B_local_85  | auto | 1       | 8, 2, 1          |
+|   B_local_86_U    | ram_1p array  |           |      |      |        | B_local_86  | auto | 1       | 8, 2, 1          |
+|   B_local_87_U    | ram_1p array  |           |      |      |        | B_local_87  | auto | 1       | 8, 2, 1          |
+|   B_local_88_U    | ram_1p array  |           |      |      |        | B_local_88  | auto | 1       | 8, 2, 1          |
+|   B_local_89_U    | ram_1p array  |           |      |      |        | B_local_89  | auto | 1       | 8, 2, 1          |
+|   B_local_90_U    | ram_1p array  |           |      |      |        | B_local_90  | auto | 1       | 8, 2, 1          |
+|   B_local_91_U    | ram_1p array  |           |      |      |        | B_local_91  | auto | 1       | 8, 2, 1          |
+|   B_local_92_U    | ram_1p array  |           |      |      |        | B_local_92  | auto | 1       | 8, 2, 1          |
+|   B_local_93_U    | ram_1p array  |           |      |      |        | B_local_93  | auto | 1       | 8, 2, 1          |
+|   B_local_94_U    | ram_1p array  |           |      |      |        | B_local_94  | auto | 1       | 8, 2, 1          |
+|   B_local_95_U    | ram_1p array  |           |      |      |        | B_local_95  | auto | 1       | 8, 2, 1          |
+|   B_local_96_U    | ram_1p array  |           |      |      |        | B_local_96  | auto | 1       | 8, 2, 1          |
+|   B_local_97_U    | ram_1p array  |           |      |      |        | B_local_97  | auto | 1       | 8, 2, 1          |
+|   B_local_98_U    | ram_1p array  |           |      |      |        | B_local_98  | auto | 1       | 8, 2, 1          |
+|   B_local_99_U    | ram_1p array  |           |      |      |        | B_local_99  | auto | 1       | 8, 2, 1          |
+|   B_local_100_U   | ram_1p array  |           |      |      |        | B_local_100 | auto | 1       | 8, 2, 1          |
+|   B_local_101_U   | ram_1p array  |           |      |      |        | B_local_101 | auto | 1       | 8, 2, 1          |
+|   B_local_102_U   | ram_1p array  |           |      |      |        | B_local_102 | auto | 1       | 8, 2, 1          |
+|   B_local_103_U   | ram_1p array  |           |      |      |        | B_local_103 | auto | 1       | 8, 2, 1          |
+|   B_local_104_U   | ram_1p array  |           |      |      |        | B_local_104 | auto | 1       | 8, 2, 1          |
+|   B_local_105_U   | ram_1p array  |           |      |      |        | B_local_105 | auto | 1       | 8, 2, 1          |
+|   B_local_106_U   | ram_1p array  |           |      |      |        | B_local_106 | auto | 1       | 8, 2, 1          |
+|   B_local_107_U   | ram_1p array  |           |      |      |        | B_local_107 | auto | 1       | 8, 2, 1          |
+|   B_local_108_U   | ram_1p array  |           |      |      |        | B_local_108 | auto | 1       | 8, 2, 1          |
+|   B_local_109_U   | ram_1p array  |           |      |      |        | B_local_109 | auto | 1       | 8, 2, 1          |
+|   B_local_110_U   | ram_1p array  |           |      |      |        | B_local_110 | auto | 1       | 8, 2, 1          |
+|   B_local_111_U   | ram_1p array  |           |      |      |        | B_local_111 | auto | 1       | 8, 2, 1          |
+|   B_local_112_U   | ram_1p array  |           |      |      |        | B_local_112 | auto | 1       | 8, 2, 1          |
+|   B_local_113_U   | ram_1p array  |           |      |      |        | B_local_113 | auto | 1       | 8, 2, 1          |
+|   B_local_114_U   | ram_1p array  |           |      |      |        | B_local_114 | auto | 1       | 8, 2, 1          |
+|   B_local_115_U   | ram_1p array  |           |      |      |        | B_local_115 | auto | 1       | 8, 2, 1          |
+|   B_local_116_U   | ram_1p array  |           |      |      |        | B_local_116 | auto | 1       | 8, 2, 1          |
+|   B_local_117_U   | ram_1p array  |           |      |      |        | B_local_117 | auto | 1       | 8, 2, 1          |
+|   B_local_118_U   | ram_1p array  |           |      |      |        | B_local_118 | auto | 1       | 8, 2, 1          |
+|   B_local_119_U   | ram_1p array  |           |      |      |        | B_local_119 | auto | 1       | 8, 2, 1          |
+|   B_local_120_U   | ram_1p array  |           |      |      |        | B_local_120 | auto | 1       | 8, 2, 1          |
+|   B_local_121_U   | ram_1p array  |           |      |      |        | B_local_121 | auto | 1       | 8, 2, 1          |
+|   B_local_122_U   | ram_1p array  |           |      |      |        | B_local_122 | auto | 1       | 8, 2, 1          |
+|   B_local_123_U   | ram_1p array  |           |      |      |        | B_local_123 | auto | 1       | 8, 2, 1          |
+|   B_local_124_U   | ram_1p array  |           |      |      |        | B_local_124 | auto | 1       | 8, 2, 1          |
+|   B_local_125_U   | ram_1p array  |           |      |      |        | B_local_125 | auto | 1       | 8, 2, 1          |
+|   B_local_126_U   | ram_1p array  |           |      |      |        | B_local_126 | auto | 1       | 8, 2, 1          |
+|   B_local_127_U   | ram_1p array  |           |      |      |        | B_local_127 | auto | 1       | 8, 2, 1          |
++-------------------+---------------+-----------+------+------+--------+-------------+------+---------+------------------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Inferred Pragmas
++----------+---------+-------------------------------------------------------------------------------+-------------------------------+
+| Type     | Options | Location                                                                      | Inferred From                 |
++----------+---------+-------------------------------------------------------------------------------+-------------------------------+
+| PIPELINE |         | loop VITIS_LOOP_15_1 (hls/gemm/gemm.cpp:15:22) in gemm (hls/gemm/gemm.cpp:15) | syn.compile.pipeline_loops=64 |
+| PIPELINE |         | loop VITIS_LOOP_22_3 (hls/gemm/gemm.cpp:22:22) in gemm (hls/gemm/gemm.cpp:22) | syn.compile.pipeline_loops=64 |
++----------+---------+-------------------------------------------------------------------------------+-------------------------------+
+
+* Valid Pragma Syntax
++-----------------+----------------------------------------+--------------------------------------+
+| Type            | Options                                | Location                             |
++-----------------+----------------------------------------+--------------------------------------+
+| ARRAY_PARTITION | variable=A_local cyclic factor=8 dim=2 | in gemm (../../hls/gemm/gemm.cpp:11) |
+| ARRAY_PARTITION | variable=B_local cyclic factor=8 dim=1 | in gemm (../../hls/gemm/gemm.cpp:12) |
+| PIPELINE        | ii=1                                   | in gemm (../../hls/gemm/gemm.cpp:35) |
+| UNROLL          | factor=8                               | in gemm (../../hls/gemm/gemm.cpp:36) |
++-----------------+----------------------------------------+--------------------------------------+
+
+
