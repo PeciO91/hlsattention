@@ -11,6 +11,8 @@ void gemm(
             acc_t acc = 0;
 
             for (int k = 0; k < K; k++) {
+                #pragma HLS PIPELINE II=1
+                #pragma HLS UNROLL factor=4
                 acc += A[i][k] * B[k][j];
             }
 
