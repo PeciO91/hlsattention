@@ -1,23 +1,44 @@
 # Python
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# C / C++
+*.o
+*.d
+compile_commands.json
 
 # Vitis / Vivado / HLS generated files
 .vitis/
 .Xil/
+.vitisWorkspace.json
+**/_ide/
 *.log
 *.jou
 *.str
 *.tmp
+*.bin
+*.pdi
+*.xclbin
+
+# Vitis component-generated workspace content
+/vitis/**/.gitignore
+/vitis/*/*/
 
 # HLS build directories
 solution*/
 *_hls/
 build/
+export/
 
 # Vivado
 *.cache/
+*.gen/
 *.hw/
 *.ip_user_files/
 *.runs/
@@ -26,6 +47,10 @@ build/
 # Editor
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
+Thumbs.db

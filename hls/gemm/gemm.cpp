@@ -8,8 +8,8 @@ void gemm(
     data_t A_local[M][K];
     data_t B_local[K][N];
 
-#pragma HLS ARRAY_PARTITION variable=A_local cyclic factor=4 dim=2
-#pragma HLS ARRAY_PARTITION variable=B_local cyclic factor=4 dim=1
+#pragma HLS ARRAY_PARTITION variable=A_local cyclic factor=16 dim=2
+#pragma HLS ARRAY_PARTITION variable=B_local cyclic factor=16 dim=1
 
     // Load A into local memory
     for (int i = 0; i < M; i++) {
@@ -33,7 +33,7 @@ void gemm(
 
             for (int k = 0; k < K; k++) {
 #pragma HLS PIPELINE II=1
-#pragma HLS UNROLL factor=4
+#pragma HLS UNROLL factor=16
                 acc += A_local[i][k] * B_local[k][j];
             }
 
